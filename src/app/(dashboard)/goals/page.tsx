@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card } from "@/components/ui/card"
+import { motion } from "framer-motion"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,7 +20,15 @@ import {
   Star,
   Flag,
   ChevronRight,
+  HeartPulse,
+  Wallet,
+  Briefcase,
+  Sparkles,
+  Dumbbell,
+  BookOpen,
+  Crosshair,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 interface Goal {
   id: string
@@ -34,14 +43,14 @@ interface Goal {
   completedAt?: string
 }
 
-const CATEGORIES = [
-  { name: "Salud", icon: "💚", color: "text-emerald-500", bg: "bg-emerald-500/10", bar: "from-emerald-400 to-emerald-600" },
-  { name: "Finanzas", icon: "💰", color: "text-amber-500", bg: "bg-amber-500/10", bar: "from-amber-400 to-amber-600" },
-  { name: "Profesional", icon: "💼", color: "text-blue-500", bg: "bg-blue-500/10", bar: "from-blue-400 to-blue-600" },
-  { name: "Personal", icon: "🌟", color: "text-purple-500", bg: "bg-purple-500/10", bar: "from-purple-400 to-purple-600" },
-  { name: "Fitness", icon: "🏋️", color: "text-orange-500", bg: "bg-orange-500/10", bar: "from-orange-400 to-orange-600" },
-  { name: "Educación", icon: "📚", color: "text-indigo-500", bg: "bg-indigo-500/10", bar: "from-indigo-400 to-indigo-600" },
-  { name: "Otro", icon: "🎯", color: "text-pink-500", bg: "bg-pink-500/10", bar: "from-pink-400 to-pink-600" },
+const CATEGORIES: { name: string; icon: LucideIcon; color: string; bg: string; bar: string }[] = [
+  { name: "Salud", icon: HeartPulse, color: "text-emerald-500", bg: "bg-emerald-500/10", bar: "from-emerald-400 to-emerald-600" },
+  { name: "Finanzas", icon: Wallet, color: "text-amber-500", bg: "bg-amber-500/10", bar: "from-amber-400 to-amber-600" },
+  { name: "Profesional", icon: Briefcase, color: "text-blue-500", bg: "bg-blue-500/10", bar: "from-blue-400 to-blue-600" },
+  { name: "Personal", icon: Sparkles, color: "text-purple-500", bg: "bg-purple-500/10", bar: "from-purple-400 to-purple-600" },
+  { name: "Fitness", icon: Dumbbell, color: "text-orange-500", bg: "bg-orange-500/10", bar: "from-orange-400 to-orange-600" },
+  { name: "Educación", icon: BookOpen, color: "text-indigo-500", bg: "bg-indigo-500/10", bar: "from-indigo-400 to-indigo-600" },
+  { name: "Otro", icon: Crosshair, color: "text-pink-500", bg: "bg-pink-500/10", bar: "from-pink-400 to-pink-600" },
 ]
 
 function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
@@ -172,11 +181,16 @@ export default function GoalsPage() {
   ]
 
   return (
-    <div className="space-y-5">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[26px] font-bold tracking-tight">Objetivos</h2>
-          <p className="text-[13px] text-muted-foreground">
+          <h2 className="text-4xl font-extrabold tracking-tight mt-1">Objetivos</h2>
+          <p className="text-base text-muted-foreground mt-1">
             {activeCount} activos · {completedCount} cumplidos · {avgProgress}% prom
           </p>
         </div>
@@ -193,7 +207,7 @@ export default function GoalsPage() {
         ].map((s) => {
           const Icon = s.icon
           return (
-            <div key={s.label} className={cn("rounded-2xl border p-3 text-center bg-gradient-to-b", s.bg, "border-transparent")}>
+            <div key={s.label} className={cn("rounded-2xl border p-3 text-center bg-gradient-to-b min-w-0", s.bg, "border-transparent")}>
               <Icon className={cn("h-4 w-4 mx-auto mb-1", s.color)} />
               <p className="text-lg font-bold">{s.value}</p>
               <p className="text-[10px] text-muted-foreground">{s.label}</p>
@@ -202,7 +216,7 @@ export default function GoalsPage() {
         })}
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
         {[
           { id: "all" as const, label: "Todos" },
           { id: "active" as const, label: "Activos" },
@@ -271,14 +285,14 @@ export default function GoalsPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className={cn("text-base font-bold", isCompleted && "text-emerald-600")}>{goal.title}</h3>
+                      <h3 className={cn("text-base font-bold truncate", isCompleted && "text-emerald-600")}>{goal.title}</h3>
                       {isCompleted && <Trophy className="h-4 w-4 text-emerald-500" />}
                     </div>
                     {goal.description && (
-                      <p className="text-xs text-muted-foreground mt-0.5">{goal.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 break-words">{goal.description}</p>
                     )}
                     <div className="flex items-center gap-2 mt-1.5 text-[10px] text-muted-foreground">
-                      <span className={cn("font-medium", cat.color)}>{cat.icon} {goal.category}</span>
+                      <span className={cn("font-medium flex items-center gap-1", cat.color)}><cat.icon className="h-3.5 w-3.5" /> {goal.category}</span>
                       <Badge variant="outline" className="text-[9px] h-4 px-1.5 rounded-md">
                         {goal.type === "short" ? "Corto plazo" : "Largo plazo"}
                       </Badge>
@@ -370,7 +384,7 @@ export default function GoalsPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => resetForm()}>
-          <div className="w-full max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300 max-h-[90vh] overflow-y-auto"
+          <div className="w-full max-w-[calc(100vw-2rem)] max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold">{editingGoal ? "Editar objetivo" : "Nuevo objetivo"}</h3>
@@ -406,7 +420,7 @@ export default function GoalsPage() {
                         : "border-border hover:bg-accent"
                     )}
                   >
-                    {c.icon} {c.name}
+                    <c.icon className="h-4 w-4" /> {c.name}
                   </button>
                 ))}
               </div>
@@ -485,6 +499,6 @@ export default function GoalsPage() {
           {toastMsg}
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

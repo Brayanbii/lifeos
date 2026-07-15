@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -212,21 +213,26 @@ export default function FinancesPage() {
   function deleteCr(id: string) { setDeleteConfirm(id); setDeleteType("credit") }
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[26px] font-bold tracking-tight">Finanzas</h2>
-          <p className="text-[13px] text-muted-foreground">{period.label}</p>
+          <h2 className="text-4xl font-extrabold tracking-tight mt-1">Finanzas</h2>
+          <p className="text-base text-muted-foreground">{period.label}</p>
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-primary/10 via-primary/5 to-background p-5 border border-primary/10">
-        <div className="text-center mb-4">
-          <p className="text-[11px] text-muted-foreground uppercase tracking-[0.2em] font-semibold">Saldo disponible</p>
-          <p className={cn("text-4xl font-extrabold tracking-tight mt-1", balance >= 0 ? "text-emerald-500" : "text-red-500")}>
+      <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary/10 via-primary/5 to-background p-8 border border-primary/10 shadow-sm">
+        <div className="text-center mb-6">
+          <p className="text-sm text-muted-foreground uppercase tracking-[0.2em] font-semibold">Saldo disponible</p>
+          <p className={cn("text-5xl font-extrabold tracking-tight mt-2", balance >= 0 ? "text-emerald-500" : "text-red-500")}>
             {formatCurrency(balance)}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-1">{period.shortLabel}</p>
+          <p className="text-sm text-muted-foreground mt-2">{period.shortLabel}</p>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {[
@@ -236,7 +242,7 @@ export default function FinancesPage() {
           ].map((s) => {
             const Icon = s.icon
             return (
-              <div key={s.label} className={cn("rounded-2xl p-3 text-center border border-transparent", s.bg)}>
+              <div key={s.label} className={cn("rounded-2xl p-3 text-center border border-transparent min-w-0", s.bg)}>
                 <Icon className={cn("h-4 w-4 mx-auto mb-1", s.color)} />
                 <p className="text-[9px] text-muted-foreground uppercase font-semibold">{s.label}</p>
                 <p className={cn("text-sm font-bold mt-0.5", s.color)}>{formatCurrency(s.value)}</p>
@@ -265,8 +271,8 @@ export default function FinancesPage() {
       </div>
 
       {activeTab === "home" && (
-        <div className="space-y-5">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="glass-panel p-6 rounded-[2rem]">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="h-6 w-1 rounded-full bg-emerald-500" />
@@ -453,7 +459,7 @@ export default function FinancesPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setShowForm(false)}>
-          <div className="w-full max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300 shadow-2xl"
+          <div className="w-full max-w-[calc(100vw-2rem)] max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300 shadow-2xl"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold">
@@ -522,7 +528,7 @@ export default function FinancesPage() {
       {showCreditForm && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setShowCreditForm(false)}>
-          <div className="w-full max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300 shadow-2xl"
+          <div className="w-full max-w-[calc(100vw-2rem)] max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300 shadow-2xl"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold">Gasto tarjeta</h3>
@@ -604,6 +610,6 @@ export default function FinancesPage() {
         }}
         onCancel={() => setDeleteConfirm(null)}
       />
-    </div>
+    </motion.div>
   )
 }

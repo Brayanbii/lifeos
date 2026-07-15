@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,7 +21,16 @@ import {
   Clock,
   Target,
   History,
+  Briefcase,
+  User,
+  HeartPulse,
+  Dumbbell,
+  Wallet,
+  BookOpen,
+  Home,
+  Pin,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 interface Task {
   id: string
@@ -35,15 +45,15 @@ interface Task {
   archivedAt?: string
 }
 
-const CATEGORIES = [
-  { name: "Trabajo", icon: "💼", color: "bg-blue-500" },
-  { name: "Personal", icon: "👤", color: "bg-purple-500" },
-  { name: "Salud", icon: "💚", color: "bg-emerald-500" },
-  { name: "Gym", icon: "🏋️", color: "bg-orange-500" },
-  { name: "Finanzas", icon: "💰", color: "bg-amber-500" },
-  { name: "Estudio", icon: "📚", color: "bg-indigo-500" },
-  { name: "Hogar", icon: "🏠", color: "bg-pink-500" },
-  { name: "Otro", icon: "📌", color: "bg-gray-500" },
+const CATEGORIES: { name: string; icon: LucideIcon; color: string }[] = [
+  { name: "Trabajo", icon: Briefcase, color: "bg-blue-500" },
+  { name: "Personal", icon: User, color: "bg-purple-500" },
+  { name: "Salud", icon: HeartPulse, color: "bg-emerald-500" },
+  { name: "Gym", icon: Dumbbell, color: "bg-orange-500" },
+  { name: "Finanzas", icon: Wallet, color: "bg-amber-500" },
+  { name: "Estudio", icon: BookOpen, color: "bg-indigo-500" },
+  { name: "Hogar", icon: Home, color: "bg-pink-500" },
+  { name: "Otro", icon: Pin, color: "bg-gray-500" },
 ]
 
 function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
@@ -183,11 +193,16 @@ export default function TasksPage() {
   const archivedTotal = tasks.filter((t) => t.status === "archived").length
 
   return (
-    <div className="space-y-5">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[26px] font-bold tracking-tight">Tareas</h2>
-          <p className="text-[13px] text-muted-foreground">
+          <h2 className="text-4xl font-extrabold tracking-tight mt-1">Tareas</h2>
+          <p className="text-base text-muted-foreground mt-1">
             {pendingCount} pendientes · {todayCount} hoy · {completedCount} hechas
           </p>
         </div>
@@ -238,7 +253,7 @@ export default function TasksPage() {
                 : "border-border text-muted-foreground hover:bg-accent"
             )}
           >
-            {c.icon} {c.name}
+            <c.icon className="h-3.5 w-3.5" /> {c.name}
           </button>
         ))}
       </div>
@@ -253,7 +268,7 @@ export default function TasksPage() {
           return (
             <button key={btn.label}
               onClick={btn.action}
-              className={cn("rounded-2xl border p-3.5 text-center transition-all hover:shadow-sm active:scale-[0.97]", btn.bg, btn.border)}
+              className={cn("rounded-2xl border p-3.5 text-center transition-all hover:shadow-sm active:scale-[0.97] min-w-0", btn.bg, btn.border)}
             >
               <Icon className={cn("h-5 w-5 mx-auto mb-1.5", btn.color)} />
               <p className="text-xs font-semibold">{btn.label}</p>
@@ -323,7 +338,7 @@ export default function TasksPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className={cn(
-                        "text-sm font-semibold",
+                        "text-sm font-semibold truncate",
                         (task.status === "completed" || isArchived) && "line-through text-muted-foreground"
                       )}>
                         {task.title}
@@ -350,7 +365,7 @@ export default function TasksPage() {
                     <div className="flex items-center gap-3 mt-1.5 text-[10px] text-muted-foreground">
                       {cat && (
                         <span className="flex items-center gap-1">
-                          <span>{cat.icon}</span> {cat.name}
+                          <cat.icon className="h-4 w-4" /> {cat.name}
                         </span>
                       )}
                       {isArchived ? (
@@ -420,7 +435,7 @@ export default function TasksPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setShowAdd(false)}>
-          <div className="w-full max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300"
+          <div className="w-full max-w-[calc(100vw-2rem)] max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold">Nueva tarea</h3>
@@ -457,7 +472,7 @@ export default function TasksPage() {
                           : "border-border hover:bg-accent"
                       )}
                     >
-                      {c.icon} {c.name}
+                      <c.icon className="h-4 w-4" /> {c.name}
                     </button>
                   ))}
                 </div>
@@ -541,6 +556,6 @@ export default function TasksPage() {
         }}
         onCancel={() => setDeleteConfirm(null)}
       />
-    </div>
+    </motion.div>
   )
 }

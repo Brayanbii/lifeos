@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -21,7 +22,17 @@ import {
   Zap,
   Target,
   Star,
+  Droplet,
+  Moon,
+  Sparkles,
+  Shield,
+  BookOpen,
+  Dumbbell,
+  Ban,
+  BedDouble,
+  HeartPulse,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 interface HabitData {
   id: string
@@ -53,6 +64,25 @@ interface DailyData {
 
 const BRUSHING_GOAL = 3
 const WATER_GOAL_ML = 4000
+
+const HABIT_ICON_MAP: Record<string, LucideIcon> = {
+  "🧴": Sparkles,
+  "🌙": Moon,
+  "🪥": HeartPulse,
+  "💧": Droplet,
+  "⚡": Zap,
+  "🧘": Shield,
+  "📖": BookOpen,
+  "🏋️": Dumbbell,
+  "🚫": Ban,
+  "😴": BedDouble,
+}
+
+function HabitIcon({ icon, className }: { icon: string; className?: string }) {
+  const IconComp = HABIT_ICON_MAP[icon]
+  if (IconComp) return <IconComp className={className} />
+  return <Target className={className} />
+}
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState<HabitData[]>([])
@@ -200,11 +230,16 @@ export default function HabitsPage() {
     : habits.filter((h) => isDone(h))
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[26px] font-bold tracking-tight">Hábitos</h2>
-          <p className="text-[13px] text-muted-foreground mt-0.5">
+          <h2 className="text-4xl font-extrabold tracking-tight mt-1">Hábitos</h2>
+          <p className="text-base text-muted-foreground mt-1">
             {totalToday} de {totalHabits} completados · {todayProgress}%
           </p>
         </div>
@@ -222,7 +257,7 @@ export default function HabitsPage() {
         ].map((s) => {
           const Icon = s.icon
           return (
-            <div key={s.label} className={cn("rounded-2xl border p-3 text-center", s.bg, "border-transparent")}>
+            <div key={s.label} className={cn("rounded-2xl border p-3 text-center min-w-0", s.bg, "border-transparent")}>
               <Icon className={cn("h-4 w-4 mx-auto mb-1", s.color)} />
               <p className="text-sm font-bold">{s.value}</p>
               <p className="text-[9px] text-muted-foreground">{s.label}</p>
@@ -286,7 +321,7 @@ export default function HabitsPage() {
                           : "bg-muted group-hover:scale-105"
                       )}
                     >
-                      {done ? <Check className="h-7 w-7" /> : habit.icon}
+                      {done ? <Check className="h-7 w-7" /> : <HabitIcon icon={habit.icon} className="h-7 w-7" />}
                     </div>
                   </div>
 
@@ -338,7 +373,7 @@ export default function HabitsPage() {
                           : "bg-muted hover:bg-accent"
                       )}
                     >
-                      {done ? <Check className="h-5 w-5" /> : <span className="text-lg">{habit.icon}</span>}
+                      {done ? <Check className="h-5 w-5" /> : <HabitIcon icon={habit.icon} className="h-5 w-5" />}
                     </button>
                   )}
                 </div>
@@ -403,7 +438,7 @@ export default function HabitsPage() {
                     </div>
                     <div className="flex items-start gap-2">
                       <Target className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                      <p className="text-xs text-muted-foreground leading-relaxed">{habit.tip}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed break-words">{habit.tip}</p>
                     </div>
                   </div>
 
@@ -431,6 +466,6 @@ export default function HabitsPage() {
           <p className="text-xs mt-1">Todos los hábitos están al día</p>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

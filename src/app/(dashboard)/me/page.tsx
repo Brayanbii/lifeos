@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
+import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -18,7 +19,16 @@ import {
   Activity,
   Edit3,
   ArrowDown,
+  Smile,
+  Zap,
+  Trophy,
+  Meh,
+  Frown,
+  CloudRain,
+  Flame,
+  ThumbsUp,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import {
   AreaChart,
   Area,
@@ -36,15 +46,15 @@ interface BodyLog {
   mood: string
 }
 
-const MOODS = [
-  { emoji: "😄", label: "Genial", color: "from-emerald-400 to-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/30" },
-  { emoji: "💪", label: "Motivado", color: "from-blue-400 to-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/30" },
-  { emoji: "🏆", label: "Orgulloso", color: "from-amber-400 to-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/30" },
-  { emoji: "🙂", label: "Bien", color: "from-teal-400 to-teal-500", bg: "bg-teal-500/10", border: "border-teal-500/30" },
-  { emoji: "😐", label: "Normal", color: "from-gray-400 to-gray-500", bg: "bg-gray-500/10", border: "border-gray-500/30" },
-  { emoji: "😕", label: "Desanimado", color: "from-orange-400 to-orange-500", bg: "bg-orange-500/10", border: "border-orange-500/30" },
-  { emoji: "😢", label: "Triste", color: "from-sky-400 to-sky-500", bg: "bg-sky-500/10", border: "border-sky-500/30" },
-  { emoji: "😤", label: "Frustrado", color: "from-red-400 to-red-500", bg: "bg-red-500/10", border: "border-red-500/30" },
+const MOODS: { emoji: string; icon: LucideIcon; label: string; color: string; bg: string; border: string }[] = [
+  { emoji: "😄", icon: Smile, label: "Genial", color: "from-emerald-400 to-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/30" },
+  { emoji: "💪", icon: Zap, label: "Motivado", color: "from-blue-400 to-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/30" },
+  { emoji: "🏆", icon: Trophy, label: "Orgulloso", color: "from-amber-400 to-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/30" },
+  { emoji: "🙂", icon: ThumbsUp, label: "Bien", color: "from-teal-400 to-teal-500", bg: "bg-teal-500/10", border: "border-teal-500/30" },
+  { emoji: "😐", icon: Meh, label: "Normal", color: "from-gray-400 to-gray-500", bg: "bg-gray-500/10", border: "border-gray-500/30" },
+  { emoji: "😕", icon: Frown, label: "Desanimado", color: "from-orange-400 to-orange-500", bg: "bg-orange-500/10", border: "border-orange-500/30" },
+  { emoji: "😢", icon: CloudRain, label: "Triste", color: "from-sky-400 to-sky-500", bg: "bg-sky-500/10", border: "border-sky-500/30" },
+  { emoji: "😤", icon: Flame, label: "Frustrado", color: "from-red-400 to-red-500", bg: "bg-red-500/10", border: "border-red-500/30" },
 ]
 
 function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
@@ -121,11 +131,16 @@ export default function MePage() {
   }, [bodyLogs])
 
   return (
-    <div className="space-y-5">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[26px] font-bold tracking-tight">Yo</h2>
-          <p className="text-[13px] text-muted-foreground">Tu registro personal</p>
+          <h2 className="text-4xl font-extrabold tracking-tight mt-1">Yo</h2>
+          <p className="text-base text-muted-foreground mt-1">Tu registro personal</p>
         </div>
         <Button size="sm" className="rounded-xl gap-1.5 shadow-sm" onClick={() => setShowAdd(true)}>
           <Plus className="h-4 w-4" /> Registrar
@@ -139,7 +154,7 @@ export default function MePage() {
         ].map((s) => {
           const Icon = s.icon
           return (
-            <div key={s.label} className={cn("rounded-2xl border p-4 text-center bg-gradient-to-b", s.bg, "border-transparent")}>
+            <div key={s.label} className={cn("rounded-2xl border p-4 text-center bg-gradient-to-b min-w-0", s.bg, "border-transparent")}>
               <Icon className={cn("h-5 w-5 mx-auto mb-1.5", s.color)} />
               <p className="text-xl font-bold">{s.value}</p>
               <p className="text-[10px] text-muted-foreground">{s.sub}</p>
@@ -215,7 +230,7 @@ export default function MePage() {
           <div className="space-y-2">
             {moodCounts.slice(0, 5).map((m) => (
               <div key={m.emoji} className="flex items-center gap-3">
-                <span className="text-xl w-8 text-center">{m.emoji}</span>
+                <m.icon className="h-5 w-5 w-8 text-center" />
                 <div className="flex-1 space-y-1">
                   <div className="flex justify-between text-[10px]">
                     <span className="font-medium">{m.label}</span>
@@ -242,12 +257,12 @@ export default function MePage() {
           </div>
           <div className="flex justify-between">
             {weekMoods.map((d, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
+              <div key={i} className="flex flex-col items-center gap-2 min-w-0">
                 <div className={cn(
                   "flex h-14 w-14 items-center justify-center rounded-2xl text-2xl transition-all",
                   MOODS.find((m) => m.emoji === d.emoji)?.bg || "bg-muted"
                 )}>
-                  {d.emoji}
+                  {(() => { const MoodIcon = MOODS.find((m) => m.emoji === d.emoji)?.icon; return MoodIcon ? <MoodIcon className="h-6 w-6" /> : null })()}
                 </div>
                 <span className="text-[10px] text-muted-foreground font-medium">{d.date}</span>
                 <span className="text-[9px] text-muted-foreground/60">{d.label}</span>
@@ -303,7 +318,7 @@ export default function MePage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setShowAdd(false)}>
-          <div className="w-full max-w-sm rounded-[20px] bg-background p-6 space-y-5 animate-in slide-in-from-bottom-4 duration-300"
+          <div className="w-full max-w-[calc(100vw-2rem)] max-w-sm rounded-[20px] bg-background p-6 space-y-5 animate-in slide-in-from-bottom-4 duration-300"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold">Registro del día</h3>
@@ -340,7 +355,7 @@ export default function MePage() {
                   >
                     <span className="text-3xl transition-transform duration-300"
                       style={{ transform: editMood === m.emoji ? "scale(1.2)" : "scale(1)" }}>
-                      {m.emoji}
+                      <m.icon className="h-6 w-6" />
                     </span>
                     <span className="text-[10px] font-medium text-muted-foreground">{m.label}</span>
                   </button>
@@ -373,6 +388,6 @@ export default function MePage() {
         }}
         onCancel={() => setDeleteConfirm(null)}
       />
-    </div>
+    </motion.div>
   )
 }

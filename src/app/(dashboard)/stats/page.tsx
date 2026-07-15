@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
+import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -219,10 +220,15 @@ export default function StatsPage() {
   const formatCOP = (n: number) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(n)
 
   return (
-    <div className="space-y-5">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div>
-        <h2 className="text-[26px] font-bold tracking-tight">Estadísticas</h2>
-        <p className="text-[13px] text-muted-foreground">Tu progreso en un solo lugar</p>
+        <h2 className="text-4xl font-extrabold tracking-tight mt-1">Estadísticas</h2>
+        <p className="text-base text-muted-foreground mt-1">Tu progreso en un solo lugar</p>
       </div>
 
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
@@ -234,7 +240,7 @@ export default function StatsPage() {
         ].map((s) => {
           const Icon = s.icon
           return (
-            <div key={s.label} className={cn("rounded-2xl border p-3 text-center bg-gradient-to-b", s.bg, "border-transparent")}>
+            <div key={s.label} className={cn("rounded-2xl border p-3 text-center bg-gradient-to-b min-w-0", s.bg, "border-transparent")}>
               <Icon className={cn("h-4 w-4 mx-auto mb-1", s.color)} />
               <p className="text-lg font-bold">{s.value}</p>
               <p className="text-[9px] text-muted-foreground">{s.sub}</p>
@@ -252,7 +258,7 @@ export default function StatsPage() {
         ].map((s) => {
           const Icon = s.icon
           return (
-            <div key={s.label} className={cn("rounded-2xl border p-3 text-center", s.bg, s.border)}>
+            <div key={s.label} className={cn("rounded-2xl border p-3 text-center min-w-0", s.bg, s.border)}>
               <Icon className={cn("h-4 w-4 mx-auto mb-1", s.color)} />
               <p className="text-sm font-bold">{s.value}</p>
               <p className="text-[9px] text-muted-foreground">{s.label}</p>
@@ -393,7 +399,7 @@ export default function StatsPage() {
             ].map((s) => {
               const Icon = s.icon
               return (
-                <div key={s.label} className={cn("rounded-2xl border p-3 text-center bg-gradient-to-b", s.bg, "border-transparent")}>
+                <div key={s.label} className={cn("rounded-2xl border p-3 text-center bg-gradient-to-b min-w-0", s.bg, "border-transparent")}>
                   <Icon className={cn("h-4 w-4 mx-auto mb-1", s.color)} />
                   <p className="text-lg font-bold">{s.value}</p>
                   <p className="text-[9px] text-muted-foreground">{s.sub}</p>
@@ -548,6 +554,6 @@ export default function StatsPage() {
           </Card>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

@@ -30,8 +30,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className="min-h-screen bg-background antialiased">
+      <body className="min-h-screen bg-background antialiased selection:bg-primary/30 relative">
         <ThemeProvider>
+          {/* Aurora Background */}
+          <div className="fixed inset-0 -z-10 h-full w-full bg-white/50 dark:bg-[#050505]">
+             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-400/20 dark:bg-purple-900/30 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob"></div>
+             <div className="absolute top-[20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-400/20 dark:bg-blue-900/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-2000"></div>
+             <div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[60%] rounded-full bg-emerald-400/20 dark:bg-emerald-900/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-4000"></div>
+          </div>
           {children}
         </ThemeProvider>
       </body>

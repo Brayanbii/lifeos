@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -23,7 +24,10 @@ import {
   Footprints,
   Zap,
   Edit3,
+  HeartPulse,
+  Activity,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 interface ExerciseSet {
   reps: number
@@ -57,6 +61,19 @@ const DEFAULT_ROUTINES: RoutineDay[] = [
   { name: "Tirón (Pull)", shortName: "Pull", focus: "Espalda, Bíceps", emoji: "🔙", exercises: [] },
   { name: "Pierna (Legs)", shortName: "Legs", focus: "Cuádriceps, Femoral, Glúteos, Pantorrillas", emoji: "🦵", exercises: [] },
 ]
+
+const ROUTINE_ICON_MAP: Record<string, LucideIcon> = {
+  "💪": Dumbbell,
+  "🔙": RotateCcw,
+  "🦵": Footprints,
+  "🧘": HeartPulse,
+}
+
+function RoutineIcon({ emoji, className }: { emoji: string; className?: string }) {
+  const IconComp = ROUTINE_ICON_MAP[emoji]
+  if (IconComp) return <IconComp className={className} />
+  return <Activity className={className} />
+}
 
 const ROUTINE_SCHEDULE: { day: number; routineIndex: number; label: string }[] = [
   { day: 1, routineIndex: 0, label: "Push" },
@@ -284,15 +301,20 @@ export default function GymPage() {
   const isRestDay = todaySchedule.routineIndex === -1
 
   return (
-    <div className="space-y-5">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[26px] font-bold tracking-tight">Gym</h2>
-          <p className="text-[13px] text-muted-foreground">{WEEKDAYS[dayOfWeek]}</p>
+          <h2 className="text-4xl font-extrabold tracking-tight mt-1">Gym</h2>
+          <p className="text-base text-muted-foreground">{WEEKDAYS[dayOfWeek]}</p>
         </div>
       </div>
 
-      <div className="rounded-[20px] border bg-gradient-to-br from-primary/5 via-primary/3 to-background p-5 border-primary/10 space-y-4">
+      <div className="rounded-[2rem] border bg-gradient-to-br from-primary/5 via-primary/3 to-background p-6 border-primary/10 space-y-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">
@@ -305,10 +327,12 @@ export default function GymPage() {
               <p className="text-xs text-muted-foreground mt-1">{todayRoutine?.focus}</p>
             )}
           </div>
-          <div className="text-4xl">{isRestDay ? "🧘" : todayRoutine?.emoji}</div>
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+            <RoutineIcon emoji={isRestDay ? "🧘" : (todayRoutine?.emoji || "🧘")} className="h-8 w-8 text-primary" />
+          </div>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
           {ROUTINE_SCHEDULE.filter((s) => s.routineIndex >= 0).map((s) => (
             <div key={s.day}
               className={cn(
@@ -507,7 +531,7 @@ export default function GymPage() {
       {showAddExercise && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setShowAddExercise(false)}>
-          <div className="w-full max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300"
+          <div className="w-full max-w-[calc(100vw-2rem)] max-w-sm rounded-[20px] bg-background p-6 space-y-4 animate-in slide-in-from-bottom-4 duration-300"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold">Nuevo ejercicio</h3>
@@ -573,7 +597,7 @@ export default function GymPage() {
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setDeleteConfirm(null)}>
-          <div className="w-full max-w-xs rounded-[20px] bg-background p-6 space-y-4 text-center animate-in zoom-in-95 duration-200"
+          <div className="w-full max-w-[calc(100vw-2rem)] max-w-xs rounded-[20px] bg-background p-6 space-y-4 text-center animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 mx-auto">
               <Trash2 className="h-7 w-7 text-red-500" />
@@ -597,7 +621,7 @@ export default function GymPage() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -646,7 +670,7 @@ function ExerciseCard({
       <div className="flex items-center justify-between mb-3">
         <div>
           <div className="flex items-center gap-2">
-            <h4 className="text-sm font-bold">{exercise.name}</h4>
+            <h4 className="text-sm font-bold truncate">{exercise.name}</h4>
             {isPR && (
               <Badge className="bg-amber-500 text-white text-[9px] gap-1 animate-bounce">
                 <Trophy className="h-3 w-3" /> PR
@@ -708,7 +732,7 @@ function ExerciseCard({
       <div className="space-y-2">
         <div className="flex gap-1.5">
           {currentSets.map((set, i) => (
-            <div key={i} className="flex-1 space-y-1">
+            <div key={i} className="flex-1 space-y-1 min-w-0">
               <div className="text-center text-[9px] text-muted-foreground font-semibold">S{i + 1}</div>
               <Input type="number" value={set.reps || ""}
                 onChange={(e) => onUpdateSet(i, "reps", parseInt(e.target.value) || 0)}

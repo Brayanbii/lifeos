@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { HistoryDialog } from "@/components/home/history-dialog"
@@ -15,12 +16,15 @@ import {
   Sun,
   Moon,
   Sparkles,
-  Droplets,
+  Droplet,
   Zap,
   Check,
   Plus,
   Minus,
   CalendarDays,
+  Sunset,
+  CheckCircle,
+  ClipboardList,
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -34,9 +38,11 @@ function getDayPeriod() {
 
 function getGreeting() {
   const hour = new Date().getHours()
-  if (hour < 12) return { text: "Buenos días", emoji: "☀️" }
-  if (hour < 18) return { text: "Buenas tardes", emoji: "🌤️" }
-  return { text: "Buenas noches", emoji: "🌙" }
+  let greeting: { text: string; icon: any }
+  if (hour < 12) greeting = { text: "Buenos días", icon: Sun }
+  else if (hour < 18) greeting = { text: "Buenas tardes", icon: Sunset }
+  else greeting = { text: "Buenas noches", icon: Moon }
+  return greeting
 }
 
 const WATER_GOAL = 4000
@@ -132,18 +138,24 @@ export default function HomePage() {
   const percent = Math.round((completedCount / totalItems) * 100)
 
   return (
-    <div className="space-y-5">
+    <motion.div 
+      className="space-y-8 overflow-x-hidden"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-[13px] text-muted-foreground capitalize tracking-tight">{today}</p>
-          <h2 className="text-[26px] font-bold tracking-tight flex items-center gap-2">
-            {greeting.text} <span className="text-2xl">{greeting.emoji}</span>
+        <div className="min-w-0">
+          <p className="text-base text-muted-foreground capitalize tracking-tight truncate">{today}</p>
+          <h2 className="text-4xl font-extrabold tracking-tight flex items-center gap-2 mt-1 min-w-0">
+            <span className="truncate">{greeting.text}</span>
+            <greeting.icon className="h-8 w-8 text-primary shrink-0" />
           </h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setHistoryOpen(true)}
-            className="flex items-center gap-1.5 rounded-full bg-muted/50 hover:bg-muted px-3 py-1.5 transition-colors"
+            className="flex items-center gap-1.5 rounded-full bg-muted/50 hover:bg-muted px-3 py-1.5 transition-colors touch-manipulation min-h-[44px]"
           >
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
             <span className="text-xs font-semibold text-muted-foreground">Historial</span>
@@ -158,16 +170,16 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/5 via-primary/3 to-transparent p-[1px]">
-        <div className="rounded-2xl bg-background p-5 space-y-4">
+      <div className="relative overflow-hidden rounded-[2rem] border bg-gradient-to-br from-primary/5 via-primary/3 to-transparent p-[1px] shadow-sm">
+        <div className="rounded-[2rem] bg-background p-6 space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-sm bg-primary text-primary-foreground">
                 <CheckSquare className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-semibold">Checklist diario</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm font-semibold truncate">Checklist diario</p>
+                <p className="text-xs text-muted-foreground truncate">
                   {percent === 100 ? "Todo listo" : `${totalItems - completedCount} pendientes`}
                 </p>
               </div>
@@ -204,7 +216,7 @@ export default function HomePage() {
               onClick={() => { setSkincareAM(!skincareAM); triggerFeedback("skincare-am") }}
               className={cn(
                 "group relative flex w-full items-center gap-4 rounded-[18px] p-[1px] text-left transition-all duration-500",
-                "hover:shadow-lg hover:shadow-amber-500/5 active:scale-[0.985]",
+                "hover:shadow-lg hover:shadow-amber-500/5 active:scale-[0.985] touch-manipulation",
                 tapFeedback === "skincare-am" && "scale-[0.97]",
                 skincareAM
                   ? "bg-gradient-to-br from-amber-400/30 via-amber-500/20 to-orange-400/30 shadow-md shadow-amber-500/10"
@@ -269,7 +281,7 @@ export default function HomePage() {
               onClick={() => { setSkincarePM(!skincarePM); triggerFeedback("skincare-pm") }}
               className={cn(
                 "group relative flex w-full items-center gap-4 rounded-[18px] p-[1px] text-left transition-all duration-500",
-                "hover:shadow-lg hover:shadow-indigo-500/5 active:scale-[0.985]",
+                "hover:shadow-lg hover:shadow-indigo-500/5 active:scale-[0.985] touch-manipulation",
                 tapFeedback === "skincare-pm" && "scale-[0.97]",
                 skincarePM
                   ? "bg-gradient-to-br from-indigo-400/30 via-violet-500/20 to-purple-400/30 shadow-md shadow-indigo-500/10"
@@ -347,7 +359,7 @@ export default function HomePage() {
                       : "bg-emerald-500/10"
                   )}
                 >
-                  {brushing >= BRUSHING_GOAL ? <Check className="h-6 w-6" /> : <span className="text-xl">🪥</span>}
+                  {brushing >= BRUSHING_GOAL ? <Check className="h-6 w-6" /> : <Sparkles className="h-6 w-6 text-emerald-500" />}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className={cn("text-sm font-semibold transition-colors", brushing >= BRUSHING_GOAL && "text-emerald-700 dark:text-emerald-400")}>
@@ -360,7 +372,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={(e) => { e.stopPropagation(); setBrushing(Math.max(0, brushing - 1)) }}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 hover:bg-accent transition-all active:scale-90 disabled:opacity-30"
+                    className="flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-border/60 hover:bg-accent transition-all active:scale-90 disabled:opacity-30 touch-manipulation"
                     disabled={brushing === 0}
                   >
                     <Minus className="h-4 w-4" />
@@ -368,7 +380,7 @@ export default function HomePage() {
                   <button
                     onClick={(e) => { e.stopPropagation(); setBrushing(brushing + 1); triggerFeedback("brushing") }}
                     className={cn(
-                      "flex h-9 w-9 items-center justify-center rounded-lg transition-all active:scale-90",
+                      "flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg transition-all active:scale-90 touch-manipulation",
                       tapFeedback === "brushing" && "scale-75",
                       brushing >= BRUSHING_GOAL
                         ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
@@ -438,7 +450,7 @@ export default function HomePage() {
                       : "bg-blue-500/10"
                   )}
                 >
-                  {waterMl >= WATER_GOAL ? <Check className="h-6 w-6" /> : <span className="text-xl">💧</span>}
+                  {waterMl >= WATER_GOAL ? <Check className="h-6 w-6" /> : <Droplet className="h-6 w-6 text-sky-500" />}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className={cn("text-sm font-semibold transition-colors", waterMl >= WATER_GOAL && "text-blue-700 dark:text-blue-400")}>
@@ -451,7 +463,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => setWaterMl(Math.max(0, waterMl - 500))}
-                    className="flex h-8 items-center gap-1 rounded-lg border border-border/60 px-2 text-[11px] font-medium hover:bg-accent transition-all active:scale-90 disabled:opacity-30"
+                    className="flex h-8 min-h-[44px] items-center gap-1 rounded-lg border border-border/60 px-2 text-[11px] font-medium hover:bg-accent transition-all active:scale-90 disabled:opacity-30 touch-manipulation"
                     disabled={waterMl === 0}
                   >
                     <Minus className="h-3 w-3" /> ½L
@@ -459,7 +471,7 @@ export default function HomePage() {
                   <button
                     onClick={() => { setWaterMl(waterMl + 1000); triggerFeedback("water") }}
                     className={cn(
-                      "flex h-8 items-center gap-1 rounded-lg px-2.5 text-[11px] font-medium transition-all active:scale-90",
+                      "flex h-8 min-h-[44px] items-center gap-1 rounded-lg px-2.5 text-[11px] font-medium transition-all active:scale-90 touch-manipulation",
                       tapFeedback === "water" && "scale-75",
                       waterMl >= WATER_GOAL
                         ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
@@ -523,7 +535,7 @@ export default function HomePage() {
             onClick={() => { setCreatine(!creatine); triggerFeedback("creatine") }}
             className={cn(
               "group relative flex w-full items-center gap-4 rounded-[18px] p-[1px] text-left transition-all duration-500",
-              "hover:shadow-lg hover:shadow-red-500/5 active:scale-[0.985]",
+              "hover:shadow-lg hover:shadow-red-500/5 active:scale-[0.985] touch-manipulation",
               tapFeedback === "creatine" && "scale-[0.97]",
               creatine
                 ? "bg-gradient-to-br from-red-400/30 via-rose-500/20 to-pink-400/30 shadow-md shadow-red-500/10"
@@ -580,7 +592,7 @@ export default function HomePage() {
             onClick={() => { setNoFap(!noFap); triggerFeedback("nofap") }}
             className={cn(
               "group relative flex w-full items-center gap-4 rounded-[18px] p-[1px] text-left transition-all duration-500",
-              "hover:shadow-lg hover:shadow-violet-500/5 active:scale-[0.985]",
+              "hover:shadow-lg hover:shadow-violet-500/5 active:scale-[0.985] touch-manipulation",
               tapFeedback === "nofap" && "scale-[0.97]",
               noFap
                 ? "bg-gradient-to-br from-violet-400/30 via-purple-500/20 to-fuchsia-400/30 shadow-md shadow-violet-500/10"
@@ -637,7 +649,7 @@ export default function HomePage() {
             onClick={() => { setLectura(!lectura); triggerFeedback("lectura") }}
             className={cn(
               "group relative flex w-full items-center gap-4 rounded-[18px] p-[1px] text-left transition-all duration-500",
-              "hover:shadow-lg hover:shadow-amber-500/5 active:scale-[0.985]",
+              "hover:shadow-lg hover:shadow-amber-500/5 active:scale-[0.985] touch-manipulation",
               tapFeedback === "lectura" && "scale-[0.97]",
               lectura
                 ? "bg-gradient-to-br from-amber-400/30 via-yellow-500/20 to-orange-400/30 shadow-md shadow-amber-500/10"
@@ -699,25 +711,25 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { href: "/habits", icon: "✅", label: "Hábitos", sub: "Versión pro", gradient: "from-emerald-500/10 to-teal-500/5", border: "border-emerald-500/20", iconBg: "bg-emerald-500/10" },
-            { href: "/finances", icon: "💰", label: "Finanzas", sub: "Registrar gasto", gradient: "from-purple-500/10 to-violet-500/5", border: "border-purple-500/20", iconBg: "bg-purple-500/10" },
-            { href: "/gym", icon: "🏋️", label: "Gym", sub: "Iniciar rutina", gradient: "from-blue-500/10 to-sky-500/5", border: "border-blue-500/20", iconBg: "bg-blue-500/10" },
-            { href: "/tasks", icon: "📋", label: "Tareas", sub: "Ver pendientes", gradient: "from-amber-500/10 to-orange-500/5", border: "border-amber-500/20", iconBg: "bg-amber-500/10" },
+            { href: "/habits", icon: CheckCircle, label: "Hábitos", sub: "Versión pro", gradient: "from-emerald-500/10 to-teal-500/5", border: "border-emerald-500/20", iconBg: "bg-emerald-500/10", iconColor: "text-emerald-500" },
+            { href: "/finances", icon: Wallet, label: "Finanzas", sub: "Registrar gasto", gradient: "from-purple-500/10 to-violet-500/5", border: "border-purple-500/20", iconBg: "bg-purple-500/10", iconColor: "text-purple-500" },
+            { href: "/gym", icon: Dumbbell, label: "Gym", sub: "Iniciar rutina", gradient: "from-blue-500/10 to-sky-500/5", border: "border-blue-500/20", iconBg: "bg-blue-500/10", iconColor: "text-blue-500" },
+            { href: "/tasks", icon: ClipboardList, label: "Tareas", sub: "Ver pendientes", gradient: "from-amber-500/10 to-orange-500/5", border: "border-amber-500/20", iconBg: "bg-amber-500/10", iconColor: "text-amber-500" },
           ].map((item) => (
             <Link key={item.href} href={item.href}>
               <div
                 className={cn(
-                  "group relative rounded-2xl border transition-all duration-200 hover:shadow-md active:scale-[0.97] cursor-pointer",
+                  "group relative rounded-2xl border transition-all duration-200 hover:shadow-md active:scale-[0.97] cursor-pointer min-w-0",
                   "bg-gradient-to-br p-4",
                   item.gradient,
                   item.border
                 )}
               >
-                <div className={cn("inline-flex h-9 w-9 items-center justify-center rounded-xl text-lg mb-2 transition-transform group-hover:scale-110", item.iconBg)}>
-                  {item.icon}
+                <div className={cn("inline-flex h-9 w-9 items-center justify-center rounded-xl mb-2 transition-transform group-hover:scale-110", item.iconBg)}>
+                  <item.icon className={cn("h-5 w-5", item.iconColor)} />
                 </div>
-                <p className="text-sm font-semibold">{item.label}</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{item.sub}</p>
+                <p className="text-sm font-semibold truncate">{item.label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{item.sub}</p>
               </div>
             </Link>
           ))}
@@ -739,7 +751,7 @@ export default function HomePage() {
             return (
               <Link key={stat.label} href={`/${stat.label.toLowerCase() === "gym" ? "gym" : stat.label.toLowerCase() === "finanzas" ? "finances" : "tasks"}`}>
                 <div className={cn(
-                  "rounded-2xl border p-3.5 text-center transition-all duration-200 hover:shadow-md active:scale-[0.97] cursor-pointer",
+                  "rounded-2xl border p-3.5 text-center transition-all duration-200 hover:shadow-md active:scale-[0.97] cursor-pointer min-w-0",
                   "bg-gradient-to-b",
                   stat.gradient,
                   stat.border
@@ -747,8 +759,8 @@ export default function HomePage() {
                   <div className={cn("mx-auto flex h-8 w-8 items-center justify-center rounded-lg mb-2 transition-transform hover:scale-110", stat.iconBg)}>
                     <Icon className={cn("h-4 w-4", stat.iconColor)} />
                   </div>
-                  <p className="text-base font-bold tracking-tight">{stat.value}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{stat.sub}</p>
+                  <p className="text-base font-bold tracking-tight truncate">{stat.value}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{stat.sub}</p>
                 </div>
               </Link>
             )
@@ -756,15 +768,15 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="rounded-[18px] bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5 border border-blue-500/15 p-5 space-y-4">
+      <div className="rounded-[18px] bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5 border border-blue-500/15 p-5 space-y-4 overflow-hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/25">
               <Flame className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-bold tracking-tight">Gym Streak</p>
-              <p className="text-[11px] text-muted-foreground">Últimos 30 días</p>
+              <p className="text-sm font-bold tracking-tight truncate">Gym Streak</p>
+              <p className="text-[11px] text-muted-foreground truncate">Últimos 30 días</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -777,7 +789,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="flex gap-[2px]">
+        <div className="flex gap-[2px] min-w-0">
           {Array.from({ length: 30 }, (_, i) => {
             const dayIndex = 29 - i
             const isGymDay = false
@@ -824,7 +836,7 @@ export default function HomePage() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10">
               <Flame className="h-3.5 w-3.5 text-orange-500" />
             </div>
-            <span className="text-xs font-semibold">Rachas</span>
+            <span className="text-xs font-semibold truncate">Rachas</span>
           </div>
           <div className="flex items-center justify-center py-3">
             <span className="text-xs text-muted-foreground">Sin datos aún</span>
@@ -836,7 +848,7 @@ export default function HomePage() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10">
               <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
             </div>
-            <span className="text-xs font-semibold">Semana</span>
+            <span className="text-xs font-semibold truncate">Semana</span>
           </div>
           <div className="flex items-end gap-1 h-12">
             {[0, 0, 0, 0, 0, 0, 0].map((val, i) => {
@@ -859,13 +871,13 @@ export default function HomePage() {
               )
             })}
           </div>
-          <p className="text-[11px] text-muted-foreground text-center mt-2">
+          <p className="text-[11px] text-muted-foreground text-center mt-2 truncate">
             Empieza hoy
           </p>
         </div>
       </div>
 
       <HistoryDialog open={historyOpen} onOpenChange={setHistoryOpen} />
-    </div>
+    </motion.div>
   )
 }
