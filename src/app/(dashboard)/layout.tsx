@@ -6,10 +6,12 @@ import { BottomNav } from "@/components/layout/bottom-nav"
 import { SearchButton } from "@/components/layout/search-button"
 import { GlobalSearch } from "@/components/search/global-search"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
+import { useSupabaseSync } from "@/hooks/use-supabase-sync"
 import type { ReactNode } from "react"
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   useKeyboardShortcuts()
+  useSupabaseSync()
 
   return (
     <div className="flex min-h-screen overflow-x-hidden">
