@@ -762,10 +762,10 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 rounded-full bg-blue-500/10 px-3 py-1">
-              <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400">7d racha</span>
+              <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400">0d racha</span>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold tabular-nums text-blue-600 dark:text-blue-400">21/30</p>
+              <p className="text-2xl font-bold tabular-nums text-blue-600 dark:text-blue-400">0/30</p>
             </div>
           </div>
         </div>
@@ -773,7 +773,7 @@ export default function HomePage() {
         <div className="flex gap-[2px]">
           {Array.from({ length: 30 }, (_, i) => {
             const dayIndex = 29 - i
-            const isGymDay = i < 2 || i === 4 || i === 7 || i === 8 || i === 11 || i === 12 || i === 14 || i === 15 || i === 17 || i === 19 || i === 20 || i === 22 || i === 23 || i === 24 || i === 25 || i === 26 || i === 27 || i === 28 || i === 29
+            const isGymDay = false
             const isToday = i === 29
             const isCurrentStreak = i >= 23
 
@@ -819,20 +819,8 @@ export default function HomePage() {
             </div>
             <span className="text-xs font-semibold">Rachas</span>
           </div>
-          <div className="space-y-2">
-            {[
-              { name: "Lectura", streak: 12, icon: "📖" },
-              { name: "Skincare", streak: 7, icon: "🧴" },
-              { name: "Creatina", streak: 14, icon: "⚡" },
-            ].map((item) => (
-              <div key={item.name} className="flex items-center justify-between rounded-lg bg-background/50 px-2.5 py-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">{item.icon}</span>
-                  <span className="text-xs font-medium">{item.name}</span>
-                </div>
-                <span className="text-[11px] font-bold text-orange-500 tabular-nums">{item.streak}d</span>
-              </div>
-            ))}
+          <div className="flex items-center justify-center py-3">
+            <span className="text-xs text-muted-foreground">Sin datos aún</span>
           </div>
         </div>
 
@@ -844,7 +832,7 @@ export default function HomePage() {
             <span className="text-xs font-semibold">Semana</span>
           </div>
           <div className="flex items-end gap-1 h-12">
-            {[4, 5, 3, 6, 5, 7, 4].map((val, i) => {
+            {[0, 0, 0, 0, 0, 0, 0].map((val, i) => {
               const maxVal = 7
               const days = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
               const isToday = i === new Date().getDay() - 1 || (new Date().getDay() === 0 && i === 6)
@@ -865,7 +853,7 @@ export default function HomePage() {
             })}
           </div>
           <p className="text-[11px] text-muted-foreground text-center mt-2">
-            Racha <span className="text-orange-500 font-bold">7 días</span>
+            Empieza hoy
           </p>
         </div>
       </div>

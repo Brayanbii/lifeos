@@ -129,23 +129,23 @@ export default function HabitsPage() {
       },
       {
         id: "meditation", name: "Meditación", icon: "🧘", color: "bg-violet-500", gradient: "from-violet-500 to-purple-500",
-        streak: 7, bestStreak: 14, completionRate: 85, totalCompletions: 134,
-        logs: {"2026-07-04":true,"2026-07-05":true,"2026-07-06":false,"2026-07-07":true,"2026-07-08":true,"2026-07-09":true,"2026-07-10":true}, type: "check", schedule: "Mañana", tip: "10-15 min de mindfulness"
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
+        logs: {}, type: "check", schedule: "Mañana", tip: "10-15 min de mindfulness"
       },
       {
         id: "exercise", name: "Ejercicio", icon: "🏋️", color: "bg-orange-500", gradient: "from-orange-500 to-red-500",
-        streak: 21, bestStreak: 21, completionRate: 95, totalCompletions: 267,
-        logs: {"2026-07-04":true,"2026-07-05":true,"2026-07-06":true,"2026-07-07":true,"2026-07-08":true,"2026-07-09":true,"2026-07-10":true}, type: "check", schedule: "5x semana", tip: "Push/Pull/Legs + cardio ligero"
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
+        logs: {}, type: "check", schedule: "5x semana", tip: "Push/Pull/Legs + cardio ligero"
       },
       {
         id: "no-sugar", name: "Sin azúcar", icon: "🚫", color: "bg-pink-500", gradient: "from-pink-500 to-rose-500",
-        streak: 3, bestStreak: 15, completionRate: 55, totalCompletions: 89,
-        logs: {"2026-07-04":false,"2026-07-05":false,"2026-07-06":true,"2026-07-07":false,"2026-07-08":true,"2026-07-09":false,"2026-07-10":true}, type: "check", schedule: "Todo el día", tip: "Revisa etiquetas, el azúcar está en todo"
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
+        logs: {}, type: "check", schedule: "Todo el día", tip: "Revisa etiquetas, el azúcar está en todo"
       },
       {
         id: "sleep", name: "Sueño 7h+", icon: "😴", color: "bg-indigo-500", gradient: "from-indigo-500 to-blue-500",
-        streak: 8, bestStreak: 20, completionRate: 78, totalCompletions: 156,
-        logs: {"2026-07-04":true,"2026-07-05":true,"2026-07-06":false,"2026-07-07":true,"2026-07-08":true,"2026-07-09":true,"2026-07-10":true}, type: "check", schedule: "10PM - 6AM", tip: "Sin pantallas 30 min antes de dormir"
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
+        logs: {}, type: "check", schedule: "10PM - 6AM", tip: "Sin pantallas 30 min antes de dormir"
       },
     ])
   }
