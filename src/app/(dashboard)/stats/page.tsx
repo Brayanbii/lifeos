@@ -264,6 +264,13 @@ export default function StatsPage() {
         })}
       </div>
 
+      {mounted && !historyDays && !tasks.length && !transactions.length && !goals.length && !gymStats.totalSessions && (
+        <div className="text-center py-8">
+          <BarChart3 className="h-8 w-8 mx-auto mb-2 text-muted-foreground/30" />
+          <p className="text-xs text-muted-foreground">Empieza a registrar datos para ver estadísticas</p>
+        </div>
+      )}
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full">
           <TabsTrigger value="overview" className="flex-1 text-[11px]">General</TabsTrigger>

@@ -207,10 +207,15 @@ export default function MePage() {
           </div>
         </Card>
       ) : bodyLogs.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground rounded-2xl border-2 border-dashed border-border/60">
-          <Scale className="h-10 w-10 mx-auto mb-3 opacity-20" />
-          <p className="text-sm font-medium">Sin registros aún</p>
-          <p className="text-xs mt-1">Registra tu peso y cómo te sientes cada día</p>
+        <div className="text-center py-16 rounded-2xl border-2 border-dashed border-border/60">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 mx-auto mb-4">
+            <Scale className="h-8 w-8 text-blue-500/40" />
+          </div>
+          <h3 className="text-sm font-bold mb-1">Sin registros de peso</h3>
+          <p className="text-xs text-muted-foreground mb-4 max-w-[200px] mx-auto">Registra tu peso y cómo te sientes cada día para ver tu progreso</p>
+          <Button size="sm" className="rounded-xl gap-1.5" onClick={() => setShowAdd(true)}>
+            <Plus className="h-3.5 w-3.5" /> Primer registro
+          </Button>
         </div>
       ) : (
         <div className="text-center py-8 text-muted-foreground rounded-2xl border-2 border-dashed border-border/60">
@@ -274,42 +279,49 @@ export default function MePage() {
           <div className="h-1 w-1 rounded-full bg-blue-500" />
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Historial</span>
         </div>
-        {bodyLogs.slice(0, 12).map((log, i) => {
-          const prev = bodyLogs[i + 1]
-          const diff = prev ? log.weight - prev.weight : 0
-          const moodInfo = MOODS.find((m) => m.emoji === log.mood)
-          return (
-            <div key={log.id} className="flex items-center justify-between rounded-2xl border border-border/50 bg-card p-3.5 group">
-              <div className="flex items-center gap-3">
-                <div className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-xl text-lg",
-                  diff < 0 ? "bg-emerald-500/10" : diff > 0 ? "bg-red-500/10" : "bg-muted"
-                )}>
-                  <Scale className={cn("h-4 w-4", diff < 0 ? "text-emerald-500" : diff > 0 ? "text-red-500" : "text-muted-foreground")} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-bold">{log.weight} kg</p>
-                    <span className="text-lg">{log.mood}</span>
+        {bodyLogs.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Calendar className="h-6 w-6 mx-auto mb-2 opacity-20" />
+            <p className="text-xs">Sin registros en el historial</p>
+          </div>
+        ) : (
+          bodyLogs.slice(0, 12).map((log, i) => {
+            const prev = bodyLogs[i + 1]
+            const diff = prev ? log.weight - prev.weight : 0
+            const moodInfo = MOODS.find((m) => m.emoji === log.mood)
+            return (
+              <div key={log.id} className="flex items-center justify-between rounded-2xl border border-border/50 bg-card p-3.5 group">
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-xl text-lg",
+                    diff < 0 ? "bg-emerald-500/10" : diff > 0 ? "bg-red-500/10" : "bg-muted"
+                  )}>
+                    <Scale className={cn("h-4 w-4", diff < 0 ? "text-emerald-500" : diff > 0 ? "text-red-500" : "text-muted-foreground")} />
                   </div>
-                  <p className="text-[10px] text-muted-foreground">
-                    {new Date(log.date).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })}
-                  </p>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-bold">{log.weight} kg</p>
+                      <span className="text-lg">{log.mood}</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">
+                      {new Date(log.date).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {diff !== 0 && (
+                    <span className={cn("text-[11px] font-semibold", diff < 0 ? "text-emerald-500" : "text-red-500")}>
+                      {diff > 0 ? "+" : ""}{diff.toFixed(1)}
+                    </span>
+                  )}
+                  <button onClick={() => setDeleteConfirm(log.id)} className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 rounded-lg">
+                    <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {diff !== 0 && (
-                  <span className={cn("text-[11px] font-semibold", diff < 0 ? "text-emerald-500" : "text-red-500")}>
-                    {diff > 0 ? "+" : ""}{diff.toFixed(1)}
-                  </span>
-                )}
-                <button onClick={() => setDeleteConfirm(log.id)} className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 rounded-lg">
-                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
-                </button>
-              </div>
-            </div>
-          )
-        })}
+            )
+          })
+        )}
       </div>
 
       {showAdd && (

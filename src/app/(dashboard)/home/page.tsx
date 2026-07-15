@@ -61,6 +61,8 @@ export default function HomePage() {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [dayCount, setDayCount] = useState(0)
+  const [streaks, setStreaks] = useState<any[]>([])
+  const [weeklyValues, setWeeklyValues] = useState<number[]>([0, 0, 0, 0, 0, 0, 0])
 
   useEffect(() => {
     const saved = localStorage.getItem("lifeos_daily")
@@ -82,6 +84,45 @@ export default function HomePage() {
       const history = JSON.parse(historyRaw)
       const days = Object.keys(history).length
       setDayCount(days)
+
+      const sortedDates = Object.keys(history).sort()
+      const habitDefs = [
+        { name: "Ejercicio", check: (d: any) => false },
+        { name: "Lectura", check: (d: any) => d.lectura === true },
+        { name: "Skincare", check: (d: any) => d.skincareAM === true || d.skincarePM === true },
+        { name: "Creatina", check: (d: any) => d.creatine === true },
+        { name: "NF", check: (d: any) => d.noFap === true },
+      ]
+      const computedStreaks = habitDefs.map(({ name, check }) => {
+        let maxStreak = 0
+        let current = 0
+        for (const date of sortedDates) {
+          if (check(history[date])) {
+            current++
+            maxStreak = Math.max(maxStreak, current)
+          } else {
+            current = 0
+          }
+        }
+        return { name, streak: maxStreak }
+      }).filter(s => s.streak > 0)
+      setStreaks(computedStreaks)
+
+      const now = new Date()
+      const weekStart = new Date(now)
+      const dayOfWeek = now.getDay()
+      const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+      weekStart.setDate(now.getDate() + mondayOffset)
+      const weekVals = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(weekStart)
+        d.setDate(weekStart.getDate() + i)
+        const key = d.toISOString().split("T")[0]
+        const entry = history[key]
+        if (!entry) return 0
+        const habits = [entry.skincareAM, entry.skincarePM, entry.creatine, entry.noFap, entry.lectura, entry.brushing >= BRUSHING_GOAL, entry.waterMl >= WATER_GOAL]
+        return habits.filter(Boolean).length
+      })
+      setWeeklyValues(weekVals)
     }
     setMounted(true)
     if (!localStorage.getItem("lifeos_onboarded")) setShowOnboarding(true)
@@ -836,9 +877,24 @@ export default function HomePage() {
             </div>
             <span className="text-xs font-semibold truncate">Rachas</span>
           </div>
-          <div className="flex items-center justify-center py-3">
-            <span className="text-xs text-muted-foreground">Sin datos aún</span>
-          </div>
+          {streaks.length === 0 ? (
+            <div className="text-center py-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 mx-auto mb-2">
+                <Flame className="h-5 w-5 text-orange-500" />
+              </div>
+              <p className="text-xs font-medium">Sin rachas aún</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Completa hábitos para empezar</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {streaks.slice(0, 3).map((s) => (
+                <div key={s.name} className="flex items-center justify-between">
+                  <span className="text-xs truncate">{s.name}</span>
+                  <span className="text-xs font-bold tabular-nums text-orange-500">{s.streak}d</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="rounded-2xl border bg-gradient-to-br from-blue-500/5 to-purple-500/5 border-blue-500/15 p-4">
@@ -849,7 +905,7 @@ export default function HomePage() {
             <span className="text-xs font-semibold truncate">Semana</span>
           </div>
           <div className="flex items-end gap-1 h-12">
-            {[0, 0, 0, 0, 0, 0, 0].map((val, i) => {
+            {weeklyValues.map((val, i) => {
               const maxVal = 7
               const days = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
               const isToday = i === new Date().getDay() - 1 || (new Date().getDay() === 0 && i === 6)
@@ -869,9 +925,15 @@ export default function HomePage() {
               )
             })}
           </div>
-          <p className="text-[11px] text-muted-foreground text-center mt-2 truncate">
-            Empieza hoy
-          </p>
+          {weeklyValues.every(v => v === 0) ? (
+            <p className="text-[11px] text-muted-foreground text-center mt-2 truncate">
+              Registra tu primer día
+            </p>
+          ) : (
+            <p className="text-[11px] text-muted-foreground text-center mt-2 truncate">
+              Empieza hoy
+            </p>
+          )}
         </div>
       </div>
 

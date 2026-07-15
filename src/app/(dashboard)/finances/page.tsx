@@ -340,10 +340,15 @@ export default function FinancesPage() {
             <span className="text-red-500 font-medium">{formatCurrency(monthExpenses)} gasto</span>
           </div>
           {sortedTx.length === 0 ? (
-            <div className="text-center py-16 text-muted-foreground">
-              <Wallet className="h-10 w-10 mx-auto mb-3 opacity-20" />
-              <p className="text-sm font-medium">Sin movimientos</p>
-              <p className="text-xs mt-1">Registra tu primer ingreso o gasto</p>
+            <div className="text-center py-16">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mx-auto mb-4">
+                <Wallet className="h-8 w-8 text-primary/40" />
+              </div>
+              <h3 className="text-sm font-bold mb-1">Sin movimientos</h3>
+              <p className="text-xs text-muted-foreground mb-4">Registra tu primer ingreso o gasto</p>
+              <Button size="sm" className="rounded-xl gap-1.5" onClick={() => { setFormType("expense"); setShowForm(true) }}>
+                <Plus className="h-3.5 w-3.5" /> Registrar gasto
+              </Button>
             </div>
           ) : (
             sortedTx.map((tx, i) => {
@@ -422,7 +427,18 @@ export default function FinancesPage() {
             </div>
           </div>
 
-          {sortedCredit.length > 0 && (
+          {sortedCredit.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 mx-auto mb-4">
+                <CreditCard className="h-8 w-8 text-amber-500/40" />
+              </div>
+              <h3 className="text-sm font-bold mb-1">Sin gastos de tarjeta</h3>
+              <p className="text-xs text-muted-foreground mb-4">Registra tu primer gasto con tarjeta</p>
+              <Button size="sm" className="rounded-xl gap-1.5 bg-amber-500 hover:bg-amber-600" onClick={() => setShowCreditForm(true)}>
+                <Plus className="h-3.5 w-3.5" /> Registrar gasto
+              </Button>
+            </div>
+          ) : (
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-muted-foreground">{sortedCredit.length} gastos este mes</span>
