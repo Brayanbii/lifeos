@@ -1,11 +1,16 @@
+"use client"
+
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
 import { BottomNav } from "@/components/layout/bottom-nav"
 import { SearchButton } from "@/components/layout/search-button"
 import { GlobalSearch } from "@/components/search/global-search"
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
 import type { ReactNode } from "react"
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  useKeyboardShortcuts()
+
   return (
     <div className="flex min-h-screen overflow-x-hidden">
       <Sidebar />

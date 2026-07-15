@@ -15,6 +15,7 @@ import {
   Wallet,
   Target,
   ArrowUpRight,
+  ArrowDownRight,
   CheckSquare,
   Activity,
   Trophy,
@@ -24,7 +25,12 @@ import {
   Sparkles,
   Timer,
   TrendingDown,
+  Droplets,
+  FileText,
+  Copy,
 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import WeeklyReport from "@/components/stats/weekly-report"
 import {
   BarChart,
   Bar,
@@ -219,6 +225,87 @@ export default function StatsPage() {
 
   const formatCOP = (n: number) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(n)
 
+  const weekComparison = useMemo(() => {
+    const getWeekRange = (offset = 0) => {
+      const now = new Date()
+      const dayOfWeek = now.getDay()
+      const monday = new Date(now)
+      monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7) - offset * 7)
+      monday.setHours(0, 0, 0, 0)
+      const sunday = new Date(monday)
+      sunday.setDate(monday.getDate() + 6)
+      sunday.setHours(23, 59, 59, 999)
+      return { start: monday, end: sunday }
+    }
+
+    const thisWeek = getWeekRange(0)
+    const lastWeek = getWeekRange(1)
+
+    const formatDate = (d: Date) => d.toISOString().split("T")[0]
+
+    const datesThisWeek: string[] = []
+    const d = new Date(thisWeek.start)
+    while (d <= thisWeek.end) {
+      datesThisWeek.push(formatDate(d))
+      d.setDate(d.getDate() + 1)
+    }
+
+    const datesLastWeek: string[] = []
+    const d2 = new Date(lastWeek.start)
+    while (d2 <= lastWeek.end) {
+      datesLastWeek.push(formatDate(d2))
+      d2.setDate(d2.getDate() + 1)
+    }
+
+    const thisWeekHistory = datesThisWeek.map((date) => history[date]).filter(Boolean)
+    const lastWeekHistory = datesLastWeek.map((date) => history[date]).filter(Boolean)
+
+    const getChecks = (day: any) =>
+      [day.skincareAM, day.skincarePM, day.creatine, day.noFap, day.lectura, (day.brushing || 0) >= 3, (day.waterMl || 0) >= 4000].filter(Boolean).length
+
+    const thisHabits = thisWeekHistory.reduce((s: number, d: any) => s + getChecks(d), 0)
+    const lastHabits = lastWeekHistory.reduce((s: number, d: any) => s + getChecks(d), 0)
+
+    const thisWater = thisWeekHistory.reduce((s: number, d: any) => s + (d.waterMl || 0), 0)
+    const lastWater = lastWeekHistory.reduce((s: number, d: any) => s + (d.waterMl || 0), 0)
+
+    const thisGym = workoutLog.filter((w: any) => {
+      const d = new Date(w.date)
+      return d >= thisWeek.start && d <= thisWeek.end
+    }).length
+    const lastGym = workoutLog.filter((w: any) => {
+      const d = new Date(w.date)
+      return d >= lastWeek.start && d <= lastWeek.end
+    }).length
+
+    const thisTasks = tasks.filter((t: any) => {
+      if (t.status !== "completed" || !t.completedAt) return false
+      const d = new Date(t.completedAt)
+      return d >= thisWeek.start && d <= thisWeek.end
+    }).length
+    const lastTasks = tasks.filter((t: any) => {
+      if (t.status !== "completed" || !t.completedAt) return false
+      const d = new Date(t.completedAt)
+      return d >= lastWeek.start && d <= lastWeek.end
+    }).length
+
+    const thisTotal = thisHabits + thisGym + thisTasks
+    const lastTotal = lastHabits + lastGym + lastTasks
+
+    return {
+      habits: { current: thisHabits, previous: lastHabits },
+      water: { current: thisWater, previous: lastWater },
+      gym: { current: thisGym, previous: lastGym },
+      tasks: { current: thisTasks, previous: lastTasks },
+      total: { current: thisTotal, previous: lastTotal },
+    }
+  }, [history, workoutLog, tasks])
+
+  const delta = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? "+100%" : "0%"
+    return `${((current - previous) / previous * 100) >= 0 ? "+" : ""}${Math.round((current - previous) / previous * 100)}%`
+  }
+
   return (
     <div 
       className="space-y-8 overflow-x-hidden"
@@ -277,6 +364,7 @@ export default function StatsPage() {
           <TabsTrigger value="habits" className="flex-1 text-[11px]">Hábitos</TabsTrigger>
           <TabsTrigger value="gym" className="flex-1 text-[11px]">Gym</TabsTrigger>
           <TabsTrigger value="finance" className="flex-1 text-[11px]">Finanzas</TabsTrigger>
+          <TabsTrigger value="comparativa" className="flex-1 text-[11px]">vs Semana</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -555,6 +643,104 @@ export default function StatsPage() {
                 <p className="text-xs text-muted-foreground text-center py-2">Sin metas financieras activas</p>
               )}
             </div>
+          </Card>
+        </div>
+      )}
+
+      {activeTab === "comparativa" && (
+        <div className="space-y-4 mt-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold">Esta semana vs Semana anterior</span>
+            </div>
+            <WeeklyReport history={history} workoutLog={workoutLog} tasks={tasks} goals={goals} transactions={transactions} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 p-4 text-center">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Esta semana</p>
+              <p className="text-2xl font-bold">{weekComparison.total.current}</p>
+              <p className="text-[10px] text-muted-foreground">acciones totales</p>
+            </div>
+            <div className="rounded-2xl bg-gradient-to-br from-slate-500/10 to-slate-600/5 border border-slate-500/20 p-4 text-center">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Semana anterior</p>
+              <p className="text-2xl font-bold">{weekComparison.total.previous}</p>
+              <p className="text-[10px] text-muted-foreground">acciones totales</p>
+            </div>
+          </div>
+
+          <Card className="bg-gradient-to-br from-primary/5 to-transparent border-primary/10 p-5">
+            <div className="space-y-4">
+              {[
+                { label: "Hábitos completados", icon: CheckSquare, color: "text-blue-500", bg: "bg-blue-500/10", current: weekComparison.habits.current, previous: weekComparison.habits.previous, unit: "checks" },
+                { label: "Hidratación", icon: Droplets, color: "text-cyan-500", bg: "bg-cyan-500/10", current: Math.round(weekComparison.water.current / 100) / 10, previous: Math.round(weekComparison.water.previous / 100) / 10, unit: "L", isDecimal: true },
+                { label: "Gym sesiones", icon: Dumbbell, color: "text-emerald-500", bg: "bg-emerald-500/10", current: weekComparison.gym.current, previous: weekComparison.gym.previous, unit: "sesiones" },
+                { label: "Tareas completadas", icon: FileText, color: "text-purple-500", bg: "bg-purple-500/10", current: weekComparison.tasks.current, previous: weekComparison.tasks.previous, unit: "tareas" },
+              ].map((item) => {
+                const Icon = item.icon
+                const diff = item.current - item.previous
+                const isPositive = diff >= 0
+                const diffText = item.isDecimal
+                  ? `${isPositive ? "+" : ""}${(Math.round(diff * 10) / 10).toFixed(1)} ${item.unit}`
+                  : `${isPositive ? "+" : ""}${diff} ${item.unit}`
+
+                return (
+                  <div key={item.label} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", item.bg)}>
+                        <Icon className={cn("h-3.5 w-3.5", item.color)} />
+                      </div>
+                      <span className="text-xs font-semibold flex-1">{item.label}</span>
+                      <div className={cn("flex items-center gap-1 text-xs font-bold", isPositive ? "text-emerald-500" : "text-red-500")}>
+                        {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                        {diffText}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
+                          <span>Esta semana</span>
+                          <span>Semana anterior</span>
+                        </div>
+                        <div className="flex h-6 gap-1">
+                          <div
+                            className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-[10px] font-bold text-white transition-all duration-500"
+                            style={{ width: `${Math.max((item.current / (Math.max(item.current + item.previous, 1))) * 100, 5)}%`, minWidth: item.current > 0 ? "30px" : "0px" }}
+                          >
+                            {item.current}
+                          </div>
+                          <div className="flex-1 h-full rounded-lg bg-slate-500/30 flex items-center justify-center text-[10px] font-bold text-slate-400">
+                            {item.previous}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-amber-500/5 to-transparent border-amber-500/10 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-amber-500" />
+                <span className="text-sm font-bold">Puntaje de productividad</span>
+              </div>
+              <Badge className="text-[10px] bg-amber-500/20 text-amber-400 border-amber-500/30">
+                {delta(weekComparison.total.current, weekComparison.total.previous)}
+              </Badge>
+            </div>
+            <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary/60">
+              <div
+                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-700"
+                style={{ width: `${Math.min(Math.round((weekComparison.total.current / Math.max(weekComparison.total.current + weekComparison.total.previous, 1)) * 100), 100)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-2 text-center">
+              Esta semana {weekComparison.total.current} vs {weekComparison.total.previous} la semana pasada
+            </p>
           </Card>
         </div>
       )}
