@@ -215,10 +215,10 @@ export default function HabitsPage() {
 
       <div className="grid grid-cols-4 gap-2">
         {[
-          { label: "Racha max", value: "21d", icon: Trophy, color: "text-amber-500", bg: "bg-amber-500/10" },
-          { label: "Completados", value: "67%", icon: Activity, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-          { label: "Esta semana", value: "89%", icon: TrendingUp, color: "text-blue-500", bg: "bg-blue-500/10" },
-          { label: "Total logs", value: "1.2k", icon: Zap, color: "text-purple-500", bg: "bg-purple-500/10" },
+          { label: "Racha max", value: `${Math.max(...habits.map((h) => h.bestStreak), 0)}d`, icon: Trophy, color: "text-amber-500", bg: "bg-amber-500/10" },
+          { label: "Completados", value: `${todayProgress}%`, icon: Activity, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+          { label: "Esta semana", value: `${todayProgress}%`, icon: TrendingUp, color: "text-blue-500", bg: "bg-blue-500/10" },
+          { label: "Total logs", value: `${Object.keys(dailyData).length > 0 ? habits.filter((h) => isDone(h)).length : 0}`, icon: Zap, color: "text-purple-500", bg: "bg-purple-500/10" },
         ].map((s) => {
           const Icon = s.icon
           return (
