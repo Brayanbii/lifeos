@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { HistoryDialog } from "@/components/home/history-dialog"
+import { Onboarding } from "@/components/onboarding/onboarding"
 import { Progress } from "@/components/ui/progress"
 import {
   Dumbbell,
@@ -59,6 +59,7 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false)
   const [tapFeedback, setTapFeedback] = useState<string | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
   const [dayCount, setDayCount] = useState(0)
 
   useEffect(() => {
@@ -83,6 +84,7 @@ export default function HomePage() {
       setDayCount(days)
     }
     setMounted(true)
+    if (!localStorage.getItem("lifeos_onboarded")) setShowOnboarding(true)
   }, [])
 
   useEffect(() => {
@@ -138,12 +140,8 @@ export default function HomePage() {
   const percent = Math.round((completedCount / totalItems) * 100)
 
   return (
-    <motion.div 
-      className="space-y-8 overflow-x-hidden"
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-    >
+    <div className="space-y-5 overflow-x-hidden">
+      {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
       <div className="flex items-center justify-between">
         <div className="min-w-0">
           <p className="text-base text-muted-foreground capitalize tracking-tight truncate">{today}</p>
@@ -878,6 +876,6 @@ export default function HomePage() {
       </div>
 
       <HistoryDialog open={historyOpen} onOpenChange={setHistoryOpen} />
-    </motion.div>
+    </div>
   )
 }

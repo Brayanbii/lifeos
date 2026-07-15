@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -230,11 +230,8 @@ export default function HabitsPage() {
     : habits.filter((h) => isDone(h))
 
   return (
-    <motion.div 
+    <div 
       className="space-y-8 overflow-x-hidden"
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
     >
       <div className="flex items-center justify-between">
         <div>
@@ -466,6 +463,6 @@ export default function HabitsPage() {
           <p className="text-xs mt-1">Todos los hábitos están al día</p>
         </div>
       )}
-    </motion.div>
+    </div>
   )
 }

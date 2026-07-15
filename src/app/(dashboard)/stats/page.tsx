@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { motion } from "framer-motion"
+
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -220,11 +220,8 @@ export default function StatsPage() {
   const formatCOP = (n: number) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(n)
 
   return (
-    <motion.div 
+    <div 
       className="space-y-8 overflow-x-hidden"
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
     >
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight mt-1">Estadísticas</h2>
@@ -554,6 +551,6 @@ export default function StatsPage() {
           </Card>
         </div>
       )}
-    </motion.div>
+    </div>
   )
 }

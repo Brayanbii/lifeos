@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { motion } from "framer-motion"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -301,11 +301,8 @@ export default function GymPage() {
   const isRestDay = todaySchedule.routineIndex === -1
 
   return (
-    <motion.div 
+    <div 
       className="space-y-8 overflow-x-hidden"
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
     >
       <div className="flex items-center justify-between">
         <div>
@@ -621,7 +618,7 @@ export default function GymPage() {
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   )
 }
 

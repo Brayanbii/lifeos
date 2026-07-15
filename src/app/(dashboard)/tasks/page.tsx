@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -193,11 +193,8 @@ export default function TasksPage() {
   const archivedTotal = tasks.filter((t) => t.status === "archived").length
 
   return (
-    <motion.div 
+    <div 
       className="space-y-8 overflow-x-hidden"
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
     >
       <div className="flex items-center justify-between">
         <div>
@@ -556,6 +553,6 @@ export default function TasksPage() {
         }}
         onCancel={() => setDeleteConfirm(null)}
       />
-    </motion.div>
+    </div>
   )
 }
