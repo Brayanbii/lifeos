@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
+import { ExportData } from "@/components/settings/export-data"
+import { AccentPicker } from "@/components/settings/accent-picker"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import {
@@ -384,6 +386,15 @@ export default function MePage() {
           {toastMsg}
         </div>
       )}
+
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 px-1">
+          <div className="h-1 w-1 rounded-full bg-primary" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Configuración</span>
+        </div>
+        <ExportData />
+        <AccentPicker />
+      </div>
 
       <ConfirmDialog
         open={!!deleteConfirm}

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { HistoryDialog } from "@/components/home/history-dialog"
 import { Onboarding } from "@/components/onboarding/onboarding"
+import { ReminderBanner } from "@/components/home/reminder-banner"
 import { Progress } from "@/components/ui/progress"
 import {
   Dumbbell,
@@ -183,6 +184,7 @@ export default function HomePage() {
   return (
     <div className="space-y-5 overflow-x-hidden">
       {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
+      <ReminderBanner />
       <div className="flex items-center justify-between">
         <div className="min-w-0">
           <p className="text-base text-muted-foreground capitalize tracking-tight truncate">{today}</p>

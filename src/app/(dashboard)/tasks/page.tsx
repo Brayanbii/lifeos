@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
+import { PomodoroTimer } from "@/components/pomodoro/pomodoro-timer"
 import {
   Plus,
   Check,
@@ -540,6 +541,8 @@ export default function TasksPage() {
           {toastMsg}
         </div>
       )}
+
+      <PomodoroTimer />
 
       <ConfirmDialog
         open={!!deleteConfirm}
