@@ -53,6 +53,7 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false)
   const [tapFeedback, setTapFeedback] = useState<string | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
+  const [dayCount, setDayCount] = useState(0)
 
   useEffect(() => {
     const saved = localStorage.getItem("lifeos_daily")
@@ -68,6 +69,12 @@ export default function HomePage() {
         setBrushing(data.brushing ?? 0)
         setWaterMl(data.waterMl ?? 0)
       }
+    }
+    const historyRaw = localStorage.getItem("lifeos_history")
+    if (historyRaw) {
+      const history = JSON.parse(historyRaw)
+      const days = Object.keys(history).length
+      setDayCount(days)
     }
     setMounted(true)
   }, [])
@@ -146,7 +153,7 @@ export default function HomePage() {
               <Sparkles className="h-4 w-4 text-amber-500" />
               <div className="absolute inset-0 animate-ping opacity-0" />
             </div>
-            <span className="text-xs font-semibold text-amber-600">Día 187</span>
+            <span className="text-xs font-semibold text-amber-600">Día {dayCount}</span>
           </div>
         </div>
       </div>

@@ -94,37 +94,37 @@ export default function HabitsPage() {
     setHabits([
       {
         id: "skincare-am", name: "Skincare AM", icon: "🧴", color: "bg-amber-500", gradient: "from-amber-500 to-orange-500",
-        streak: 7, bestStreak: 14, completionRate: 85, totalCompletions: 142,
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
         logs: {}, type: "check", schedule: "6:00 - 9:00 AM", tip: "No olvides el protector solar SPF 50+"
       },
       {
         id: "skincare-pm", name: "Skincare PM", icon: "🌙", color: "bg-indigo-500", gradient: "from-indigo-500 to-violet-500",
-        streak: 5, bestStreak: 10, completionRate: 70, totalCompletions: 98,
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
         logs: {}, type: "check", schedule: "8:00 - 11:00 PM", tip: "Doble limpieza + retinol en días alternos"
       },
       {
         id: "brushing", name: "Cepillado dental", icon: "🪥", color: "bg-emerald-500", gradient: "from-emerald-500 to-teal-500",
-        streak: 8, bestStreak: 20, completionRate: 90, totalCompletions: 245,
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
         logs: {}, type: "counter", counterGoal: BRUSHING_GOAL, schedule: "3 veces al día", tip: "2 minutos mínimo cada vez"
       },
       {
         id: "water", name: "Hidratación", icon: "💧", color: "bg-sky-500", gradient: "from-sky-500 to-cyan-500",
-        streak: 5, bestStreak: 10, completionRate: 70, totalCompletions: 156,
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
         logs: {}, type: "counter", counterGoal: WATER_GOAL_ML, schedule: "4L diarios", tip: "Distribuye en 8 tomas de 500ml"
       },
       {
         id: "creatine", name: "Creatina", icon: "⚡", color: "bg-red-500", gradient: "from-red-500 to-rose-500",
-        streak: 12, bestStreak: 30, completionRate: 90, totalCompletions: 198,
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
         logs: {}, type: "check", schedule: "Cualquier hora", tip: "5g diarios, no requiere carga"
       },
       {
         id: "nofap", name: "NF", icon: "🧘", color: "bg-violet-500", gradient: "from-violet-500 to-purple-500",
-        streak: 14, bestStreak: 21, completionRate: 85, totalCompletions: 167,
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
         logs: {}, type: "check", schedule: "24/7", tip: "Un día a la vez. La disciplina es libertad."
       },
       {
         id: "lectura", name: "Lectura", icon: "📖", color: "bg-amber-500", gradient: "from-amber-500 to-yellow-500",
-        streak: 12, bestStreak: 30, completionRate: 92, totalCompletions: 203,
+        streak: 0, bestStreak: 0, completionRate: 0, totalCompletions: 0,
         logs: {}, type: "check", schedule: "Preferiblemente noche", tip: "30 min mínimo. Mejor papel que pantalla."
       },
       {
