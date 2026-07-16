@@ -17,6 +17,7 @@ import {
   BarChart3,
   User,
   Zap,
+  Flame,
   X,
 } from "lucide-react"
 
@@ -30,6 +31,7 @@ const navItems = [
   { href: "/stats", label: "Estadísticas", icon: BarChart3 },
   { href: "/me", label: "Yo", icon: User },
   { href: "/operacion", label: "Operación", icon: Zap },
+  { href: "/recomposicion", label: "Recomposición", icon: Flame },
 ]
 
 export function Sidebar() {

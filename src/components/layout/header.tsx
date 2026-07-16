@@ -15,6 +15,7 @@ const titles: Record<string, string> = {
   "/stats": "Estadísticas",
   "/me": "Yo",
   "/operacion": "Operación",
+  "/recomposicion": "Recomposición",
 }
 
 export function Header() {
