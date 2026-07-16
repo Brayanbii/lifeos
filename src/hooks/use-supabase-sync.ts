@@ -128,6 +128,27 @@ export function useSupabaseSync() {
         }
       }
 
+      const booksData = localStorage.getItem("lifeos_books")
+      if (booksData) {
+        const books = JSON.parse(booksData)
+        for (const b of books.slice(0, 20)) {
+          await supabase.from("books").upsert({
+            id: b.id,
+            profile_id: "default",
+            title: b.title,
+            author: b.author || "",
+            total_pages: b.totalPages || 0,
+            current_page: b.currentPage || 0,
+            status: b.status,
+            genre: b.genre,
+            started_at: b.startedAt || null,
+            finished_at: b.finishedAt || null,
+            rating: b.rating || 0,
+            notes: b.notes || "",
+          }, { onConflict: "id" })
+        }
+      }
+
       const opData = localStorage.getItem("lifeos_operacion_done")
       if (opData) {
         const op = JSON.parse(opData)
@@ -197,6 +218,15 @@ export function useSupabaseSync() {
       if (cr) {
         localStorage.setItem("lifeos_credit", JSON.stringify(cr.map((c: any) => ({
           id: c.id, amount: c.amount, category: c.category, description: c.description, date: c.date,
+        }))))
+      }
+
+      const { data: bk } = await supabase.from("books").select("*").eq("profile_id", "default").order("created_at", { ascending: false }).limit(50)
+      if (bk) {
+        localStorage.setItem("lifeos_books", JSON.stringify(bk.map((b: any) => ({
+          id: b.id, title: b.title, author: b.author, totalPages: b.total_pages, currentPage: b.current_page,
+          status: b.status, genre: b.genre, startedAt: b.started_at, finishedAt: b.finished_at,
+          rating: b.rating, notes: b.notes,
         }))))
       }
     } catch (e) {
