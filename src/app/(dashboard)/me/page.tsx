@@ -231,47 +231,88 @@ export default function MePage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {[
-          { label: "Peso", value: latest ? `${latest.weight}kg` : "—", sub: weightChange !== 0 ? `${weightChange > 0 ? "+" : ""}${weightChange.toFixed(1)}kg` : "—", icon: Scale, color: "text-blue-500", bg: "bg-blue-500/10" },
-          { label: "Meta", value: `${weightGoal}kg`, sub: goalDiff === 0 ? "Logrado" : goalDiff > 0 ? `Faltan ${goalDiff.toFixed(1)}kg` : `${Math.abs(goalDiff).toFixed(1)}kg pasado`, icon: Activity, color: goalDiff === 0 ? "text-emerald-500" : "text-amber-500", bg: goalDiff === 0 ? "bg-emerald-500/10" : "bg-amber-500/10" },
+          { label: "Peso actual", value: latest ? `${latest.weight}kg` : "—", sub: "", icon: Scale, color: "text-blue-500", bg: "bg-blue-500/10" },
+          { label: "Meta", value: `${weightGoal}kg`, sub: goalDiff === 0 ? "¡Logrado!" : goalDiff > 0 ? `-${goalDiff.toFixed(1)}kg` : `+${Math.abs(goalDiff).toFixed(1)}kg`, icon: Activity, color: goalDiff === 0 ? "text-emerald-500" : goalDiff > 0 ? "text-emerald-500" : "text-red-500", bg: goalDiff === 0 ? "bg-emerald-500/10" : goalDiff > 0 ? "bg-emerald-500/10" : "bg-red-500/10" },
+          { label: "Cambio", value: weightChange !== 0 ? `${weightChange > 0 ? "+" : ""}${weightChange.toFixed(1)}kg` : "—", sub: weightChange < 0 ? "↓ Bajando" : weightChange > 0 ? "↑ Subiendo" : "Estable", icon: TrendingUp, color: weightChange < 0 ? "text-emerald-500" : weightChange > 0 ? "text-red-500" : "text-slate-400", bg: weightChange < 0 ? "bg-emerald-500/10" : weightChange > 0 ? "bg-red-500/10" : "bg-slate-500/10" },
         ].map((s) => {
           const Icon = s.icon
           return (
-            <div key={s.label} className={cn("rounded-2xl border p-4 text-center bg-gradient-to-b", s.bg, "border-transparent")}>
-              <Icon className={cn("h-5 w-5 mx-auto mb-1.5", s.color)} />
-              <p className="text-xl font-bold">{s.value}</p>
-              <p className="text-[10px] text-muted-foreground">{s.sub}</p>
+            <div key={s.label} className={cn("rounded-2xl border p-3 text-center bg-gradient-to-b", s.bg, "border-transparent")}>
+              <Icon className={cn("h-4 w-4 mx-auto mb-1", s.color)} />
+              <p className="text-lg font-bold">{s.value}</p>
+              <p className="text-[9px] text-muted-foreground">{s.sub}</p>
             </div>
           )
         })}
       </div>
 
-      {sortedLogs.length > 1 ? (
-        <Card className="bg-gradient-to-br from-blue-500/5 to-transparent border-blue-500/10 p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="h-4 w-4 text-blue-500" />
-            <span className="text-sm font-bold">Evolución de peso</span>
-            <Badge variant="outline" className="text-[9px] ml-auto">Meta: {weightGoal}kg</Badge>
+      {sortedLogs.length >= 1 ? (
+        <div className="rounded-2xl border bg-[#0a0f1a] dark:bg-[#0a0f1a] p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/20">
+                <TrendingUp className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">PESO · <span className="text-emerald-400">{weightGoal}kg meta</span></p>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-extrabold text-white tabular-nums">{latest?.weight || chartData[0]?.weight}</span>
+                  <span className="text-xs text-slate-400">kg</span>
+                  {weightChange !== 0 && (
+                    <Badge className={cn("text-[10px]", weightChange < 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400")}>
+                      {weightChange > 0 ? "+" : ""}{weightChange.toFixed(1)} kg
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">VARIACIÓN</p>
+              <p className={cn("text-sm font-bold", weightChange < 0 ? "text-emerald-400" : weightChange > 0 ? "text-red-400" : "text-slate-400")}>
+                {weightChange < 0 ? "↓" : weightChange > 0 ? "↑" : "→"} {Math.abs(weightChange).toFixed(1)} kg
+              </p>
+            </div>
           </div>
-          <div className="h-[180px]">
+          <div className="h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval="preserveStartEnd" />
-                <YAxis domain={[minWeight, maxWeight]} hide />
                 <defs>
-                  <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                  <linearGradient id="tradeGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.25} />
+                    <stop offset="50%" stopColor="#10b981" stopOpacity={0.05} />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <Area type="monotone" dataKey="weight" stroke="#3b82f6" strokeWidth={2.5} fill="url(#weightGrad)" dot={{ r: 4, fill: "#3b82f6" }} />
-                <ReferenceLine y={weightGoal} stroke="#10b981" strokeWidth={2} strokeDasharray="6 4" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" strokeWidth={0.5} />
+                <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fontSize: 10, fill: "#64748b" }} interval="preserveStartEnd" />
+                <YAxis domain={[minWeight, maxWeight]} hide />
+                <Area
+                  type="monotone"
+                  dataKey="weight"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  fill="url(#tradeGrad)"
+                  dot={{ r: 3, fill: "#10b981", stroke: "#0a0f1a", strokeWidth: 2 }}
+                  activeDot={{ r: 5, fill: "#10b981", stroke: "#fff", strokeWidth: 2 }}
+                />
+                <ReferenceLine y={weightGoal} stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4 4" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </Card>
+          <div className="flex items-center justify-between text-[10px]">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5"><div className="h-2 w-2 rounded-full bg-emerald-500" /><span className="text-slate-400">Peso</span></div>
+              <div className="flex items-center gap-1.5"><div className="h-0.5 w-3 bg-amber-500" style={{ borderTop: "1.5px dashed #f59e0b" }} /><span className="text-slate-400">Meta</span></div>
+            </div>
+            {chartData.length > 1 && (
+              <span className="text-slate-500">
+                {chartData[0]?.date} → {chartData[chartData.length - 1]?.date}
+              </span>
+            )}
+          </div>
+        </div>
       ) : (
         <div className="text-center py-16 rounded-2xl border-2 border-dashed border-border/60">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 mx-auto mb-4">
