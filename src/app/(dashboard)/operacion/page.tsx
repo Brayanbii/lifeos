@@ -110,14 +110,12 @@ function isBlockPast(block: Block, now: { h: number; m: number }): boolean {
   return current >= end
 }
 
-function getBlockProgress(block: Block, now: { h: number; m: number }): number {
-  if (!isBlockActive(block, now)) return isBlockPast(block, now) ? 100 : 0
-  const start = block.startHour * 60 + block.startMin
-  let end = block.endHour * 60 + block.endMin
-  if (end < start) end += 24 * 60
+function getTimeRemaining(block: Block, now: { h: number; m: number }): { min: number; sec: number; total: number } {
+  const end = block.endHour * 60 + block.endMin
   const current = now.h * 60 + now.m
-  const adjustedCurrent = current < start ? current + 24 * 60 : current
-  return Math.min(100, Math.round(((adjustedCurrent - start) / (end - start)) * 100))
+  let remaining = end - current
+  if (remaining < 0) remaining += 24 * 60
+  return { min: Math.floor(remaining / 60), sec: remaining % 60, total: remaining }
 }
 
 export default function OperacionPage() {
@@ -140,7 +138,7 @@ export default function OperacionPage() {
     }
     const histRaw = localStorage.getItem("lifeos_operacion_history")
     if (histRaw) setHistory(JSON.parse(histRaw))
-    const interval = setInterval(() => setNow(getNow()), 15000)
+    const interval = setInterval(() => setNow(getNow()), 1000)
     return () => clearInterval(interval)
   }, [])
 
@@ -248,12 +246,24 @@ export default function OperacionPage() {
                   <span key={tip} className="rounded-lg bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">{tip}</span>
                 ))}
               </div>
-              <div className="mt-3 space-y-1.5">
-                <div className="flex justify-between text-[10px] text-muted-foreground"><span>Progreso</span><span>{getBlockProgress(currentBlock, now)}%</span></div>
-                <div className="relative h-2 w-full overflow-hidden rounded-full bg-secondary/60">
-                  <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary to-blue-400 transition-all duration-[2000ms] ease-linear"
-                    style={{ width: `${getBlockProgress(currentBlock, now)}%` }} />
-                </div>
+              <div className="mt-3">
+                {currentBlock.phase === 1 || currentBlock.phase === 2 ? (
+                  <div className="flex items-center justify-center gap-2 rounded-xl bg-primary/10 py-3">
+                    <Clock className="h-5 w-5 text-primary" />
+                    <span className="text-2xl font-extrabold tabular-nums text-primary tracking-tight">
+                      {String(getTimeRemaining(currentBlock, now).min).padStart(2, "0")}:{String(getTimeRemaining(currentBlock, now).sec).padStart(2, "0")}
+                    </span>
+                    <span className="text-xs text-muted-foreground">restante</span>
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[10px] text-muted-foreground"><span>Progreso</span><span>{Math.round((1 - getTimeRemaining(currentBlock, now).total / ((currentBlock.endHour * 60 + currentBlock.endMin) - (currentBlock.startHour * 60 + currentBlock.startMin))) * 100)}%</span></div>
+                    <div className="relative h-2 w-full overflow-hidden rounded-full bg-secondary/60">
+                      <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary to-blue-400 transition-all duration-[2000ms] ease-linear"
+                        style={{ width: `${Math.round((1 - getTimeRemaining(currentBlock, now).total / ((currentBlock.endHour * 60 + currentBlock.endMin) - (currentBlock.startHour * 60 + currentBlock.startMin))) * 100)}%` }} />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -344,10 +354,26 @@ export default function OperacionPage() {
                   </div>
                   {active && !done && (
                     <div className="mt-3">
-                      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-secondary/60">
-                        <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary to-blue-400 transition-all duration-[2000ms] ease-linear"
-                          style={{ width: `${getBlockProgress(block, now)}%` }} />
-                      </div>
+                      {block.phase === 1 || block.phase === 2 ? (
+                        <div className="flex items-center justify-center gap-1 rounded-xl bg-primary/10 py-2.5">
+                          <Clock className="h-4 w-4 text-primary" />
+                          <span className="text-xl font-extrabold tabular-nums text-primary tracking-tight">
+                            {String(getTimeRemaining(block, now).min).padStart(2, "0")}:{String(getTimeRemaining(block, now).sec).padStart(2, "0")}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground">restante</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>Progreso</span>
+                            <span>{Math.round((1 - getTimeRemaining(block, now).total / ((block.endHour * 60 + block.endMin) - (block.startHour * 60 + block.startMin))) * 100)}%</span>
+                          </div>
+                          <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-secondary/60">
+                            <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary to-blue-400 transition-all duration-[2000ms] ease-linear"
+                              style={{ width: `${Math.round((1 - getTimeRemaining(block, now).total / ((block.endHour * 60 + block.endMin) - (block.startHour * 60 + block.startMin))) * 100)}%` }} />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   {block.tips.length > 0 && done && (
