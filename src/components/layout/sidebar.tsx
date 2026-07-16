@@ -16,6 +16,7 @@ import {
   Target,
   BarChart3,
   User,
+  Zap,
   X,
 } from "lucide-react"
 
@@ -28,6 +29,7 @@ const navItems = [
   { href: "/goals", label: "Objetivos", icon: Target },
   { href: "/stats", label: "Estadísticas", icon: BarChart3 },
   { href: "/me", label: "Yo", icon: User },
+  { href: "/operacion", label: "Operación", icon: Zap },
 ]
 
 export function Sidebar() {
