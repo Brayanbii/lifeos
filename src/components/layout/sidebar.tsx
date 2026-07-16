@@ -18,6 +18,7 @@ import {
   User,
   Zap,
   Flame,
+  Library,
   X,
 } from "lucide-react"
 
@@ -32,6 +33,7 @@ const navItems = [
   { href: "/me", label: "Yo", icon: User },
   { href: "/operacion", label: "Operación", icon: Zap },
   { href: "/recomposicion", label: "Recomposición", icon: Flame },
+  { href: "/biblioteca", label: "Biblioteca", icon: Library },
 ]
 
 export function Sidebar() {
