@@ -9,7 +9,7 @@ import {
   Dumbbell,
   Wallet,
   ListTodo,
-  User,
+  Zap,
 } from "lucide-react"
 
 const navItems = [
@@ -18,7 +18,7 @@ const navItems = [
   { href: "/gym", label: "Gym", icon: Dumbbell },
   { href: "/finances", label: "Finanzas", icon: Wallet },
   { href: "/tasks", label: "Tareas", icon: ListTodo },
-  { href: "/me", label: "Yo", icon: User },
+  { href: "/operacion", label: "Operación", icon: Zap },
 ]
 
 export function BottomNav() {
