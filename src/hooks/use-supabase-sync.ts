@@ -127,6 +127,18 @@ export function useSupabaseSync() {
           }, { onConflict: "id" })
         }
       }
+
+      const opData = localStorage.getItem("lifeos_operacion_done")
+      if (opData) {
+        const op = JSON.parse(opData)
+        const blocks = op.blocks || {}
+        const today = new Date().toISOString().split("T")[0]
+        await supabase.from("daily_logs").upsert({
+          profile_id: "default",
+          date: today,
+          operacion_blocks: blocks,
+        }, { onConflict: "profile_id,date" })
+      }
     } catch (e) {
       console.log("Sync skipped (offline or error)")
     }
